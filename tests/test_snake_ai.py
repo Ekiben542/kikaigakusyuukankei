@@ -4,11 +4,10 @@ import numpy as np
 import pytest
 from time import time
 from sklearn.metrics import confusion_matrix, roc_curve, accuracy_score, precision_score, recall_score, f1_score
-import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
-from scipy.special import expit
+
 # `kikaigakusyuukankei`ディレクトリをsys.pathに追加
 home_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../kikaigakusyuukankei'))
 sys.path.append(home_dir)
@@ -46,6 +45,7 @@ def test_snake_ai_performance(snake_ai):
         losses = []
         true_labels = []
         predictions = []
+        action_probabilities_list = []
 
         start_time = time()
         for epoch in range(epochs):
@@ -60,13 +60,22 @@ def test_snake_ai_performance(snake_ai):
             losses.append(loss)
             true_labels.append(data[0])  
             predictions.append(np.argmax(action_probabilities))
+            action_probabilities_list.append(action_probabilities[0])
+
+        print(f"True labels shape: {len(true_labels)}")
+        print(f"Predictions shape: {len(predictions)}")
+        print(f"Action probabilities shape: {len(action_probabilities_list)}")
 
         accuracy = accuracy_score(true_labels, predictions)
         precision = precision_score(true_labels, predictions, average='weighted', zero_division=1)
         recall = recall_score(true_labels, predictions, average='weighted')
         f1 = f1_score(true_labels, predictions, average='weighted')
         conf_matrix = confusion_matrix(true_labels, predictions)
-        fpr, tpr, thresholds = roc_curve(true_labels, [prob[1] for prob in action_probabilities], pos_label=1)
+
+        if len(action_probabilities_list[0]) > 1:
+            fpr, tpr, thresholds = roc_curve(true_labels, [prob[1] for prob in action_probabilities_list], pos_label=1)
+        else:
+            fpr, tpr, thresholds = [], [], []
 
         print(f"Epochs: {epochs}")
         print(f"Losses: {losses}")
@@ -81,3 +90,4 @@ def test_snake_ai_performance(snake_ai):
         assert precision > 0.5, "Precision is below acceptable level"
         assert recall > 0.5, "Recall is below acceptable level"
         assert f1 > 0.5, "F1 Score is below acceptable level"
+
