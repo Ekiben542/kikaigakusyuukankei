@@ -1,11 +1,18 @@
+import sys
 import os
 import numpy as np
 import pytest
 from time import time
 from sklearn.metrics import confusion_matrix, roc_curve, accuracy_score, precision_score, recall_score, f1_score
 
+# `kikaigakusyuukankei`ディレクトリをsys.pathに追加
+home_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../kikaigakusyuukankei'))
+sys.path.append(home_dir)
 snakeai_module = os.environ.get('SNAKEAI_MODULE', 'snake_ai_module')
-SnakeAI = getattr(__import__(snakeai_module, fromlist=['SnakeAI']), 'SnakeAI')
+# `RNN`モジュールをインポート
+import snakeai_module
+
+SnakeAI = RNN.SnakeAI
 
 @pytest.fixture
 def snake_ai():
@@ -71,4 +78,3 @@ def test_snake_ai_performance(snake_ai):
         assert precision > 0.5, "Precision is below acceptable level"
         assert recall > 0.5, "Recall is below acceptable level"
         assert f1 > 0.5, "F1 Score is below acceptable level"
-
