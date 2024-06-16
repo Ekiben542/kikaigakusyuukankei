@@ -6,8 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: '0 0 * * 1'  # 毎週月曜日に実行
-
+    - cron: '*/30 * * * *'  # 30分ごとに実行
 jobs:
   analyze:
     name: Analyze
@@ -20,9 +19,9 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
-        languages: ['python'] 
+        languages: python  
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
       with:
-        category: 'security'
+        category: security
