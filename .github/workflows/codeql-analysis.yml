@@ -7,14 +7,19 @@ on:
     branches: [ main ]
   schedule:
     - cron: '*/30 * * * *'  # 30分ごとに実行
+
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # 最新バージョンに更新
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
@@ -25,3 +30,4 @@ jobs:
       uses: github/codeql-action/analyze@v2
       with:
         category: security
+
