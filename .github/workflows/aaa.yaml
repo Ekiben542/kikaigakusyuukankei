@@ -32,15 +32,21 @@ jobs:
       id: find-snakeai
       run: |
         file=$(grep -rl 'class SnakeAI' .)
-        echo "::set-output name=snakeai_file::${file%.*}"
+        if [ -n "$file" ]; then
+          echo "snakeai_file=${file%.*}" >> $GITHUB_ENV
+        else
+          echo "Error: SnakeAI module not found"
+          exit 1
+        fi
 
     - name: Run tests with coverage
       run: |
         pytest --cov=./ tests/
       env:
-        SNAKEAI_MODULE: ${{ steps.find-snakeai.outputs.snakeai_file }}
+        SNAKEAI_MODULE: ${{ env.snakeai_file }}
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+
