@@ -8,11 +8,10 @@ from sklearn.metrics import confusion_matrix, roc_curve, accuracy_score, precisi
 # `kikaigakusyuukankei`ディレクトリをsys.pathに追加
 home_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../kikaigakusyuukankei'))
 sys.path.append(home_dir)
-snakeai_module = os.environ.get('SNAKEAI_MODULE', 'snake_ai_module')
-# `RNN`モジュールをインポート
-import snakeai_module
 
-SnakeAI = RNN.SnakeAI
+# 環境変数からモジュール名を取得し、動的にインポート
+snakeai_module = os.environ.get('SNAKEAI_MODULE', 'snake_ai_module')
+SnakeAI = getattr(__import__(snakeai_module, fromlist=['SnakeAI']), 'SnakeAI')
 
 @pytest.fixture
 def snake_ai():
