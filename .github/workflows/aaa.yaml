@@ -42,15 +42,16 @@ jobs:
         fi
 
     - name: Run tests with coverage
+      env:
+        snakeai_files: ${{ env.snakeai_files }}
       run: |
         IFS=',' read -r -a snakeai_files_array <<< "${snakeai_files}"
         for snakeai_file in "${snakeai_files_array[@]}"; do
           echo "Running tests for: $snakeai_file"
-          SNAKEAI_MODULE=$snakeai_file pytest --cov=./ tests/
+          SNAKEAI_MODULE=$snakeai_file PYTHONPATH=$PYTHONPATH:. pytest --cov=./ tests/
         done
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-
