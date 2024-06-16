@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 from time import time
 from sklearn.metrics import confusion_matrix, roc_curve, accuracy_score, precision_score, recall_score, f1_score
-
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from scipy.special import expit
 # `kikaigakusyuukankei`ディレクトリをsys.pathに追加
 home_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../kikaigakusyuukankei'))
 sys.path.append(home_dir)
