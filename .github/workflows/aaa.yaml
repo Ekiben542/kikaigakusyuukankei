@@ -33,7 +33,9 @@ jobs:
       run: |
         file=$(grep -rl 'class SnakeAI' .)
         if [ -n "$file" ]; then
-          echo "snakeai_file=$(echo $file | sed 's/\.py$//')" >> $GITHUB_ENV
+          snakeai_file=$(echo $file | sed 's/\.py$//')
+          echo "snakeai_file=${snakeai_file}" >> $GITHUB_ENV
+          echo "Found SnakeAI module: ${snakeai_file}.py"
         else
           echo "Error: SnakeAI module not found"
           exit 1
