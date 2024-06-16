@@ -17,46 +17,23 @@ from DQN import Qlearning
 import math
 import ast
 
-rect=0,0,1920,1080 #”CˆÓ
+rect=0,0,1920,1080 #â€CË†Ã“
 def get_game_screen_data():
     img = np.asarray(ImageGrab.grab(rect))
     #img = img.flatten()
     return img
 
-class IsKilled:
-    def __init__(self):
-        self.flag = False
-
-    def point(self, screen):
-        hsv = cv2.cvtColor(screen, cv2.COLOR_BGR2HSV)
-        lower_color = np.array([0, 100, 100])
-        upper_color = np.array([10, 255, 255])
-        mask = cv2.inRange(hsv, lower_color, upper_color)
-        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        for contour in contours:
-            if cv2.contourArea(contour) > 5000:  
-                x, y, w, h = cv2.boundingRect(contour)
-                aspect_ratio = float(w) / h
-                if aspect_ratio < 0.5 or aspect_ratio > 2.0:  
-                    M = cv2.moments(contour)
-                    cX = int(M["m10"] / M["m00"])
-                    cY = int(M["m01"] / M["m00"])
-                    self.flag = True
-                    return self.flag, (cX, cY)
-        self.flag = False
-        return self.flag, None
-
-    def hantei(self, screen):
-        if self.flag:
-            hsv = cv2.cvtColor(screen, cv2.COLOR_BGR2HSV)
-            lower_color = np.array([0, 100, 100])
-            upper_color = np.array([10, 255, 255])
-            mask = cv2.inRange(hsv, lower_color, upper_color)
-            if np.sum(mask) < 1000:
-                self.flag = False
-                return True
-        self.flag = False
-        return False
+def is_snake_killed(contour, img):
+    mask = np.zeros(img.shape[:2], dtype=np.uint8)
+    cv2.drawContours(mask, [contour], -1, 255, thickness=cv2.FILLED)
+   
+    # Create a mask for white areas in the image
+    white_mask = ((img[:, :, 0] > 200) & (img[:, :, 1] > 200) & (img[:, :, 2] > 200)).astype(np.uint8) * 255
+   
+    # Perform bitwise_and with uint8 mask
+    white_area = cv2.countNonZero(cv2.bitwise_and(mask, mask, mask=white_mask))
+   
+    return white_area > 0
 
 def is_gameover(screen):
     gray_screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
