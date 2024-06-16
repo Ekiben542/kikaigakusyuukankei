@@ -35,6 +35,7 @@ jobs:
         if [ -n "$files" ]; then
           for file in $files; do
             snakeai_file=$(echo $file | sed 's/\.py$//')
+            snakeai_file=${snakeai_file#./}
             echo "snakeai_file=${snakeai_file}" >> $GITHUB_ENV
             echo "Found SnakeAI module: ${snakeai_file}.py"
           done
