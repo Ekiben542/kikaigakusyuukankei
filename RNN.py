@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
-from scipy.special import expit  # Sigmoid function
+from scipy.special import expit  # Sigmoid 
 
 class SnakeAI:
     def __init__(self, state_size, action_size):
