@@ -33,12 +33,9 @@ jobs:
       run: |
         files=$(grep -rl 'class SnakeAI' . | grep '\.py$')
         if [ -n "$files" ]; then
-          for file in $files; do
-            snakeai_file=$(echo $file | sed 's/\.py$//')
-            snakeai_file=${snakeai_file#./}
-            echo "snakeai_file=${snakeai_file}" >> $GITHUB_ENV
-            echo "Found SnakeAI module: ${snakeai_file}.py"
-          done
+          snakeai_files=$(echo "$files" | sed 's/\.py$//;s/\.\///g' | paste -sd "," -)
+          echo "snakeai_files=${snakeai_files}" >> $GITHUB_ENV
+          echo "Found SnakeAI modules: ${snakeai_files}.py"
         else
           echo "Error: SnakeAI module not found"
           exit 1
@@ -46,7 +43,8 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        for snakeai_file in ${snakeai_file}; do
+        IFS=',' read -r -a snakeai_files_array <<< "${snakeai_files}"
+        for snakeai_file in "${snakeai_files_array[@]}"; do
           echo "Running tests for: $snakeai_file"
           SNAKEAI_MODULE=$snakeai_file pytest --cov=./ tests/
         done
@@ -55,3 +53,4 @@ jobs:
       uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+
