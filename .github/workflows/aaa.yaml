@@ -28,14 +28,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest pytest-cov scikit-learn
 
-    - name: Find SnakeAI module
+    - name: Find SnakeAI modules
       id: find-snakeai
       run: |
-        file=$(grep -rl 'class SnakeAI' .)
-        if [ -n "$file" ]; then
-          snakeai_file=$(echo $file | sed 's/\.py$//')
-          echo "snakeai_file=${snakeai_file}" >> $GITHUB_ENV
-          echo "Found SnakeAI module: ${snakeai_file}.py"
+        files=$(grep -rl 'class SnakeAI' . | grep '\.py$')
+        if [ -n "$files" ]; then
+          for file in $files; do
+            snakeai_file=$(echo $file | sed 's/\.py$//')
+            echo "snakeai_file=${snakeai_file}" >> $GITHUB_ENV
+            echo "Found SnakeAI module: ${snakeai_file}.py"
+          done
         else
           echo "Error: SnakeAI module not found"
           exit 1
@@ -43,9 +45,10 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        pytest --cov=./ tests/
-      env:
-        SNAKEAI_MODULE: ${{ env.snakeai_file }}
+        for snakeai_file in ${snakeai_file}; do
+          echo "Running tests for: $snakeai_file"
+          SNAKEAI_MODULE=$snakeai_file pytest --cov=./ tests/
+        done
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4.0.1
