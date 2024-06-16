@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
-from scipy.special import expit  # Sigmoid kansuu desu aaa aaa 
+from scipy.special import expit  # Sigmoid function
 
 class SnakeAI:
     def __init__(self, state_size, action_size):
@@ -35,10 +35,10 @@ class SnakeAI:
         self.hidden_state = self.update_rnn_state(self.hidden_state, importance)
         
         action_probabilities = self.model.predict(state)
-        return action_probabilities
+        return action_probabilities, state
     
     def calculate_importance(self, state):
-        importance = 1.0 / (state[0, 0, 6] + 1)  
+        importance = 1.0 / (state[0, 0, 6] + 1)  # Nearest small snake distance
         return importance
     
     def update_rnn_state(self, hidden_state, importance):
@@ -46,13 +46,13 @@ class SnakeAI:
             hidden_state = np.zeros_like(hidden_state)
         return hidden_state
     
-
     def angle(self, vector):
         angle = np.arctan2(vector[1], vector[0])
         return angle
     
     def decide_boost(self, distance):
         return expit(distance)
+
 
 
 import numpy as np
