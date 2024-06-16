@@ -33,7 +33,7 @@ jobs:
       run: |
         file=$(grep -rl 'class SnakeAI' .)
         if [ -n "$file" ]; then
-          echo "snakeai_file=${file%.*}" >> $GITHUB_ENV
+          echo "snakeai_file=$(echo $file | sed 's/\.py$//')" >> $GITHUB_ENV
         else
           echo "Error: SnakeAI module not found"
           exit 1
@@ -49,4 +49,3 @@ jobs:
       uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-
