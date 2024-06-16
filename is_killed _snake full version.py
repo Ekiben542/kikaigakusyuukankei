@@ -195,3 +195,6 @@ def main():
     print("最も近い敵蛇の距離 (大きな蛇):", nearest_large_snake_distance)
     print("最も近い敵蛇の方向ベクトル (大きな蛇) (dx, dy):", nearest_large_snake_vector)
     print(killed_snakes)
+if __name__ == "__main__":
+    for i in range(2):
+        main()
