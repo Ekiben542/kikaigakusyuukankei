@@ -7,12 +7,8 @@ from sklearn.metrics import confusion_matrix, roc_curve, accuracy_score, precisi
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
-
-# `kikaigakusyuukankei`ディレクトリをsys.pathに追加
 home_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../kikaigakusyuukankei'))
 sys.path.append(home_dir)
-
-# 環境変数からモジュール名を取得し、動的にインポート
 snakeai_module = os.environ.get('SNAKEAI_MODULE', 'snake_ai_module')
 SnakeAI = getattr(__import__(snakeai_module, fromlist=['SnakeAI']), 'SnakeAI')
 
